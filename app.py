@@ -1,19 +1,18 @@
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
 import torch.nn.functional as F
+import torch
 
-# Load lightweight NLI model
 @st.cache_resource
 def load_model():
-    model_name = "typeform/distilroberta-base-mnli"
+    model_name = "prajjwal1/bert-tiny-mnli"   # super lightweight
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSequenceClassification.from_pretrained(model_name)
     return tokenizer, model
 
 tokenizer, model = load_model()
 
-st.title("📝 Contract Clause Verifier (NLI MVP)")
+st.title("📝 Contract Clause Verifier (Tiny NLI)")
 
 premise = st.text_area("Contract Clause (Premise)", 
                        "The tenant shall maintain valid insurance during the lease term.")
@@ -30,5 +29,4 @@ if st.button("Verify"):
     result = {labels[i]: float(probs[i]) for i in range(len(labels))}
     st.write("### Results")
     st.json(result)
-
     st.success(f"Predicted: {labels[probs.argmax().item()]} ✅")
